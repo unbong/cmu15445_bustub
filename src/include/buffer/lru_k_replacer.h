@@ -21,19 +21,36 @@
 #include "common/config.h"
 #include "common/macros.h"
 
+#include <chrono>
+
 namespace bustub {
 
 enum class AccessType { Unknown = 0, Get, Scan };
 
 class LRUKNode {
+
  private:
   /** History of last seen K timestamps of this page. Least recent timestamp stored in front. */
   // Remove maybe_unused if you start using them. Feel free to change the member variables as you want.
 
-  [[maybe_unused]] std::list<size_t> history_;
-  [[maybe_unused]] size_t k_;
-  [[maybe_unused]] frame_id_t fid_;
+  [[maybe_unused]] std::list<size_t> history_{};
+  [[maybe_unused]] size_t k_{0};
+  [[maybe_unused]] frame_id_t fid_{0};
   [[maybe_unused]] bool is_evictable_{false};
+
+ public:
+
+  void setHistory(const std::list<size_t> &history);
+  void setK(size_t k);
+  void setFid(frame_id_t fid);
+  void setIsEvictable(bool isEvictable);
+  void addOneToK();
+
+  frame_id_t getFid() const;
+  size_t getK() const;
+   std::list<size_t> &getHistory() ;
+  bool isEvictable() const;
+
 };
 
 /**
@@ -156,6 +173,14 @@ class LRUKReplacer {
   [[maybe_unused]] size_t replacer_size_;
   [[maybe_unused]] size_t k_;
   [[maybe_unused]] std::mutex latch_;
+
+  // todo std:: mutex
+
+  /**
+   *
+   * @return
+   */
+  auto GetCurrentTimeStamp()->size_t ;
 };
 
 }  // namespace bustub

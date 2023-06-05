@@ -217,7 +217,7 @@ class BufferPoolManager {
   auto AllocateFrameId(page_id_t page_id, frame_id_t &frame_id) -> bool;
 
   /**
-   * @brief 是否有可驱逐的帧
+   * @brief 是否有可驱逐的页
    * @param frame_id frame的id
    * @return 如果都被固定，返回false，否则true
    */

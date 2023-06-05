@@ -49,9 +49,8 @@ auto BufferPoolManager::NewPage(page_id_t *page_id) -> Page * {
     if(!is_allocatable) {
       page_id = nullptr;
       return nullptr;
-    }
-    // 可驱逐的帧，将其驱逐并设定为不可驱逐
-    else{
+    }else{
+      // 可驱逐的帧，将其驱逐并设定为不可驱逐
 
       replacer_->Evict(&frame_id);
       replacer_->SetEvictable(frame_id, false);
@@ -71,6 +70,8 @@ auto BufferPoolManager::NewPage(page_id_t *page_id) -> Page * {
   // record access
   replacer_->RecordAccess(frame_id);
   pages_[frame_id].pin_count_++;
+  pages_[frame_id].page_id_ = *page_id;
+
   return &pages_[frame_id];
 
 }
@@ -90,13 +91,11 @@ auto BufferPoolManager::FetchPage(page_id_t page_id, [[maybe_unused]] AccessType
     if(is_frame_id_allocatable )
     {
       page_table_[page_id] = frame_id;
-    }
-    // 帧id无法被分配
-    else{
+    }else{
+      // 帧id无法被分配
       return nullptr;
     }
-  }
-  else{
+  }else{
     frame_id = iter->second;
   }
 
@@ -113,7 +112,7 @@ auto BufferPoolManager::FetchPage(page_id_t page_id, [[maybe_unused]] AccessType
   return fetchPage;
 }
 
-auto BufferPoolManager::UnpinPage(page_id_t page_id, bool is_dirty, [[maybe_unused]] AccessType access_type) -> bool {
+auto BufferPoolManager::  UnpinPage(page_id_t page_id, bool is_dirty, [[maybe_unused]] AccessType access_type) -> bool {
 
   auto iter = page_table_.find(page_id);
   // 在缓冲区池里没有 ，返回false

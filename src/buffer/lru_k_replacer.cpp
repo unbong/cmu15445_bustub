@@ -20,28 +20,27 @@ LRUKReplacer::LRUKReplacer(size_t num_frames, size_t k) : replacer_size_(num_fra
 auto LRUKReplacer::Evict(frame_id_t *frame_id) -> bool {
 
   bool res = false;
-  size_t maxKthDistance = 0;                    // init max distance
-  size_t currentTime = GetCurrentTimeStamp();   //
-  size_t  earliestFrameTime = INT64_MAX;
+  size_t max_kth_distance = 0;                    // init max distance
+  size_t current_time = GetCurrentTimeStamp();   //
+  size_t earliest_frame_time = INT64_MAX;
 
   // loop frame map to get max kth distance
-  for(auto iter = node_store_.begin(); iter != node_store_.end(); iter++){
-    LRUKNode node = iter->second;
+  for(auto & iter : node_store_){
+    LRUKNode node = iter.second;
     if(node.isEvictable())
     {
       if(node.getK() < k_)
       {
-        maxKthDistance = INT64_MAX;
-        if(earliestFrameTime > node.getHistory().front())
+        max_kth_distance = INT64_MAX;
+        if(earliest_frame_time > node.getHistory().front())
         {
-          earliestFrameTime = node.getHistory().front();
-          *frame_id = iter->first;
+          earliest_frame_time = node.getHistory().front();
+          *frame_id = iter.first;
           res = true;
         }
-      }
-      else if( maxKthDistance < (currentTime  - node.getHistory().front())){
-        maxKthDistance = currentTime  - node.getHistory().front();
-        * frame_id = iter->first;
+      }else if(max_kth_distance < (current_time - node.getHistory().front())){
+        max_kth_distance = current_time - node.getHistory().front();
+        * frame_id = iter.first;
         res = true;
       }
     }

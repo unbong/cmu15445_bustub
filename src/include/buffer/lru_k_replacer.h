@@ -20,7 +20,6 @@
 
 #include "common/config.h"
 #include "common/macros.h"
-
 #include <chrono>
 
 namespace bustub {

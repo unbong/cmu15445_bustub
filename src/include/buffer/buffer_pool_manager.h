@@ -78,7 +78,7 @@ class BufferPoolManager {
    *
    * Functionality should be the same as NewPage, except that
    * instead of returning a pointer to a page, you return a
-   * BasicPageGuard structure.
+   * Basic_PageGuard structure.
    *
    * @param[out] page_id, the id of the new page
    * @return BasicPageGuard holding a new page
@@ -193,6 +193,7 @@ class BufferPoolManager {
   /** This latch protects shared data structures. We recommend updating this comment to describe what it protects. */
   std::mutex latch_;
 
+
   /**
    * @brief Allocate a page on disk. Caller should acquire the latch before calling this function.
    * @return the id of the allocated page
@@ -208,5 +209,25 @@ class BufferPoolManager {
   }
 
   // TODO(student): You may add additional private members and helper functions
+
+  /**
+   * @brief 返回可分配的frame id 如果帧集合中无可分配，则驱逐一个帧
+   * @return 如果无可分配返回false
+   */
+  auto AllocateFrameId(page_id_t page_id, frame_id_t &frame_id) -> bool;
+
+  /**
+   * @brief 是否有可驱逐的帧
+   * @param frame_id frame的id
+   * @return 如果都被固定，返回false，否则true
+   */
+  auto IsAllocateFromReplacer() -> bool;
+
+  /**
+   * @brief 查看在freelist中有空闲帧
+   * @param frame_id
+   * @return
+   */
+  auto GetFrameIDFromFreeList (frame_id_t & frame_id)->bool ;
 };
 }  // namespace bustub

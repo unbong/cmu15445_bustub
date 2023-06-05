@@ -169,7 +169,7 @@ class LRUKReplacer {
   // Remove maybe_unused if you start using them.
   [[maybe_unused]] std::unordered_map<frame_id_t, LRUKNode> node_store_;
   [[maybe_unused]] size_t current_timestamp_{0};
-  [[maybe_unused]] size_t curr_size_{0};
+  [[maybe_unused]] size_t curr_size_{0};   // 可以被分配的
   [[maybe_unused]] size_t replacer_size_;
   [[maybe_unused]] size_t k_;
   [[maybe_unused]] std::mutex latch_;

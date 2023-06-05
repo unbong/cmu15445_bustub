@@ -19,7 +19,7 @@ LRUKReplacer::LRUKReplacer(size_t num_frames, size_t k) : replacer_size_(num_fra
 
 auto LRUKReplacer::Evict(frame_id_t *frame_id) -> bool {
 
-  frame_id = nullptr;                           // set null
+  bool res = false;
   size_t maxKthDistance = 0;                    // init max distance
   size_t currentTime = GetCurrentTimeStamp();   //
   size_t  earliestFrameTime = INT64_MAX;
@@ -35,17 +35,19 @@ auto LRUKReplacer::Evict(frame_id_t *frame_id) -> bool {
         if(earliestFrameTime > node.getHistory().front())
         {
           earliestFrameTime = node.getHistory().front();
-          * frame_id = iter->first;
+          *frame_id = iter->first;
+          res = true;
         }
       }
       else if( maxKthDistance < (currentTime  - node.getHistory().front())){
         maxKthDistance = currentTime  - node.getHistory().front();
         * frame_id = iter->first;
+        res = true;
       }
     }
   }
 
-  if(frame_id != nullptr)
+  if(res)
   {
     Remove(*frame_id);
     return true;
@@ -56,11 +58,14 @@ auto LRUKReplacer::Evict(frame_id_t *frame_id) -> bool {
 
 void LRUKReplacer::RecordAccess(frame_id_t frame_id, [[maybe_unused]] AccessType access_type) {
 
-  if(replacer_size_ >= curr_size_) throw  std::runtime_error("curr");
+  if(replacer_size_ < (size_t)frame_id) throw  std::runtime_error("frame id is invalid.");
+
   auto iter = node_store_.find(frame_id);
   // 在replacer中不存在则新追加
   if(iter == node_store_.end())
   {
+    /*
+     *  如果不在缓存池中则追加 */
     LRUKNode node;
     node.setFid(frame_id);
     node.addOneToK();
@@ -69,7 +74,9 @@ void LRUKReplacer::RecordAccess(frame_id_t frame_id, [[maybe_unused]] AccessType
     node.setHistory(hist);
     latch_.lock();
     node_store_[frame_id] = node;
+    curr_size_++;
     latch_.unlock();
+
   }
   // 存在则，更新第更新时间戳
   else{
@@ -124,11 +131,10 @@ auto LRUKReplacer::Size() -> size_t { return curr_size_; }
 
 auto LRUKReplacer::GetCurrentTimeStamp() -> size_t {
 
-  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-
   // Convert the system time to a time_t object
-  std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
+  size_t currentTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
+  //std::cerr<< "current time:" << currentTime << std::endl;
   return  static_cast<size_t>(currentTime);
 
 }

@@ -18,16 +18,15 @@
 #include <unordered_map>
 #include <vector>
 
+#include <chrono>
 #include "common/config.h"
 #include "common/macros.h"
-#include <chrono>
 
 namespace bustub {
 
 enum class AccessType { Unknown = 0, Get, Scan };
 
 class LRUKNode {
-
  private:
   /** History of last seen K timestamps of this page. Least recent timestamp stored in front. */
   // Remove maybe_unused if you start using them. Feel free to change the member variables as you want.
@@ -38,18 +37,16 @@ class LRUKNode {
   [[maybe_unused]] bool is_evictable_{false};
 
  public:
+  void SetHistory(const std::list<size_t> &history);
+  void SetK(size_t k);
+  void SetFid(frame_id_t fid);
+  void SetIsEvictable(bool isEvictable);
+  void AddOneToK();
 
-  void setHistory(const std::list<size_t> &history);
-  void setK(size_t k);
-  void setFid(frame_id_t fid);
-  void setIsEvictable(bool isEvictable);
-  void addOneToK();
-
-  frame_id_t getFid() const;
-  size_t getK() const;
-   std::list<size_t> &getHistory() ;
-  bool isEvictable() const;
-
+  auto GetFid() const -> frame_id_t;
+  auto GetK() const -> size_t;
+  auto GetHistory() -> std::list<size_t> &;
+  auto IsEvictable() const -> bool;
 };
 
 /**
@@ -168,7 +165,7 @@ class LRUKReplacer {
   // Remove maybe_unused if you start using them.
   [[maybe_unused]] std::unordered_map<frame_id_t, LRUKNode> node_store_;
   [[maybe_unused]] size_t current_timestamp_{0};
-  [[maybe_unused]] size_t curr_size_{0};   // 可以被分配的
+  [[maybe_unused]] size_t curr_size_{0};  // 可以被分配的
   [[maybe_unused]] size_t replacer_size_;
   [[maybe_unused]] size_t k_;
   [[maybe_unused]] std::mutex latch_;
@@ -179,7 +176,7 @@ class LRUKReplacer {
    *
    * @return
    */
-  auto GetCurrentTimeStamp()->size_t ;
+  auto GetCurrentTimeStamp() -> size_t;
 };
 
 }  // namespace bustub

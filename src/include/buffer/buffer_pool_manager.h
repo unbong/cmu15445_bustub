@@ -193,7 +193,6 @@ class BufferPoolManager {
   /** This latch protects shared data structures. We recommend updating this comment to describe what it protects. */
   std::mutex latch_;
 
-
   /**
    * @brief Allocate a page on disk. Caller should acquire the latch before calling this function.
    * @return the id of the allocated page
@@ -228,6 +227,6 @@ class BufferPoolManager {
    * @param frame_id
    * @return
    */
-  auto GetFrameIDFromFreeList (frame_id_t & frame_id)->bool ;
+  auto GetFrameIDFromFreeList(frame_id_t &frame_id) -> bool;
 };
 }  // namespace bustub

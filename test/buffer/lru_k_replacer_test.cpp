@@ -16,7 +16,7 @@
 
 namespace bustub {
 
-//TEST(LRUKReplacerTest, DISABLED_SampleTest) {
+// TEST(LRUKReplacerTest, DISABLED_SampleTest) {
 TEST(LRUKReplacerTest, SampleTest) {
   LRUKReplacer lru_replacer(7, 2);
 
